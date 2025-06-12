@@ -1,0 +1,377 @@
+
+<!-- saved from url=(0156)http://124.156.202.183:8000/files/Projects/deepseek-quickstart/deepseek/api/gomoku02.html?_xsrf=2%7C41c11ba7%7Ca0d18f406979a44e8698b2864b55806d%7C1749657050 -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body data-new-gr-c-s-check-loaded="14.1107.0" data-gr-ext-installed=""># 五子棋游戏 HTML 实现
+
+以下是一个完整的五子棋游戏 HTML 实现，所有代码都在一个 HTML 文件中：
+
+```html
+
+
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五子棋游戏</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5dc;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #8B4513;
+            margin-bottom: 10px;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .status {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #8B4513;
+            font-weight: bold;
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(15, 40px);
+            grid-template-rows: repeat(15, 40px);
+            background-color: #DEB887;
+            border: 2px solid #8B4513;
+            position: relative;
+        }
+        
+        .cell {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #8B4513;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .cell:hover {
+            background-color: rgba(222, 184, 135, 0.7);
+        }
+        
+        .stone {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .black {
+            background: radial-gradient(circle at 30% 30%, #666, #000);
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        
+        .white {
+            background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 8px 15px;
+            background-color: #8B4513;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #A0522D;
+        }
+        
+        .grid-line {
+            position: absolute;
+            background-color: #8B4513;
+        }
+        
+        .horizontal {
+            height: 1px;
+            width: 100%;
+            left: 0;
+        }
+        
+        .vertical {
+            width: 1px;
+            height: 100%;
+            top: 0;
+        }
+        
+        .star-point {
+            width: 8px;
+            height: 8px;
+            background-color: #8B4513;
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+
+
+    <h1>五子棋游戏</h1>
+    
+    <div class="game-container">
+        <div class="status" id="status">黑方回合</div>
+        <div class="board" id="board"><div class="grid-line horizontal" style="top: 20px;"></div><div class="grid-line vertical" style="left: 20px;"></div><div class="grid-line horizontal" style="top: 60px;"></div><div class="grid-line vertical" style="left: 60px;"></div><div class="grid-line horizontal" style="top: 100px;"></div><div class="grid-line vertical" style="left: 100px;"></div><div class="grid-line horizontal" style="top: 140px;"></div><div class="grid-line vertical" style="left: 140px;"></div><div class="grid-line horizontal" style="top: 180px;"></div><div class="grid-line vertical" style="left: 180px;"></div><div class="grid-line horizontal" style="top: 220px;"></div><div class="grid-line vertical" style="left: 220px;"></div><div class="grid-line horizontal" style="top: 260px;"></div><div class="grid-line vertical" style="left: 260px;"></div><div class="grid-line horizontal" style="top: 300px;"></div><div class="grid-line vertical" style="left: 300px;"></div><div class="grid-line horizontal" style="top: 340px;"></div><div class="grid-line vertical" style="left: 340px;"></div><div class="grid-line horizontal" style="top: 380px;"></div><div class="grid-line vertical" style="left: 380px;"></div><div class="grid-line horizontal" style="top: 420px;"></div><div class="grid-line vertical" style="left: 420px;"></div><div class="grid-line horizontal" style="top: 460px;"></div><div class="grid-line vertical" style="left: 460px;"></div><div class="grid-line horizontal" style="top: 500px;"></div><div class="grid-line vertical" style="left: 500px;"></div><div class="grid-line horizontal" style="top: 540px;"></div><div class="grid-line vertical" style="left: 540px;"></div><div class="grid-line horizontal" style="top: 580px;"></div><div class="grid-line vertical" style="left: 580px;"></div><div class="star-point" style="left: 140px; top: 140px;"></div><div class="star-point" style="left: 140px; top: 460px;"></div><div class="star-point" style="left: 300px; top: 300px;"></div><div class="star-point" style="left: 460px; top: 140px;"></div><div class="star-point" style="left: 460px; top: 460px;"></div><div class="cell" data-row="0" data-col="0"></div><div class="cell" data-row="0" data-col="1"></div><div class="cell" data-row="0" data-col="2"></div><div class="cell" data-row="0" data-col="3"></div><div class="cell" data-row="0" data-col="4"></div><div class="cell" data-row="0" data-col="5"></div><div class="cell" data-row="0" data-col="6"></div><div class="cell" data-row="0" data-col="7"></div><div class="cell" data-row="0" data-col="8"></div><div class="cell" data-row="0" data-col="9"></div><div class="cell" data-row="0" data-col="10"></div><div class="cell" data-row="0" data-col="11"></div><div class="cell" data-row="0" data-col="12"></div><div class="cell" data-row="0" data-col="13"></div><div class="cell" data-row="0" data-col="14"></div><div class="cell" data-row="1" data-col="0"></div><div class="cell" data-row="1" data-col="1"></div><div class="cell" data-row="1" data-col="2"></div><div class="cell" data-row="1" data-col="3"></div><div class="cell" data-row="1" data-col="4"></div><div class="cell" data-row="1" data-col="5"></div><div class="cell" data-row="1" data-col="6"></div><div class="cell" data-row="1" data-col="7"></div><div class="cell" data-row="1" data-col="8"></div><div class="cell" data-row="1" data-col="9"></div><div class="cell" data-row="1" data-col="10"></div><div class="cell" data-row="1" data-col="11"></div><div class="cell" data-row="1" data-col="12"></div><div class="cell" data-row="1" data-col="13"></div><div class="cell" data-row="1" data-col="14"></div><div class="cell" data-row="2" data-col="0"></div><div class="cell" data-row="2" data-col="1"></div><div class="cell" data-row="2" data-col="2"></div><div class="cell" data-row="2" data-col="3"></div><div class="cell" data-row="2" data-col="4"></div><div class="cell" data-row="2" data-col="5"></div><div class="cell" data-row="2" data-col="6"></div><div class="cell" data-row="2" data-col="7"></div><div class="cell" data-row="2" data-col="8"></div><div class="cell" data-row="2" data-col="9"></div><div class="cell" data-row="2" data-col="10"></div><div class="cell" data-row="2" data-col="11"></div><div class="cell" data-row="2" data-col="12"></div><div class="cell" data-row="2" data-col="13"></div><div class="cell" data-row="2" data-col="14"></div><div class="cell" data-row="3" data-col="0"></div><div class="cell" data-row="3" data-col="1"></div><div class="cell" data-row="3" data-col="2"></div><div class="cell" data-row="3" data-col="3"></div><div class="cell" data-row="3" data-col="4"></div><div class="cell" data-row="3" data-col="5"></div><div class="cell" data-row="3" data-col="6"></div><div class="cell" data-row="3" data-col="7"></div><div class="cell" data-row="3" data-col="8"></div><div class="cell" data-row="3" data-col="9"></div><div class="cell" data-row="3" data-col="10"></div><div class="cell" data-row="3" data-col="11"></div><div class="cell" data-row="3" data-col="12"></div><div class="cell" data-row="3" data-col="13"></div><div class="cell" data-row="3" data-col="14"></div><div class="cell" data-row="4" data-col="0"></div><div class="cell" data-row="4" data-col="1"></div><div class="cell" data-row="4" data-col="2"></div><div class="cell" data-row="4" data-col="3"></div><div class="cell" data-row="4" data-col="4"></div><div class="cell" data-row="4" data-col="5"></div><div class="cell" data-row="4" data-col="6"></div><div class="cell" data-row="4" data-col="7"></div><div class="cell" data-row="4" data-col="8"></div><div class="cell" data-row="4" data-col="9"></div><div class="cell" data-row="4" data-col="10"></div><div class="cell" data-row="4" data-col="11"></div><div class="cell" data-row="4" data-col="12"></div><div class="cell" data-row="4" data-col="13"></div><div class="cell" data-row="4" data-col="14"></div><div class="cell" data-row="5" data-col="0"></div><div class="cell" data-row="5" data-col="1"></div><div class="cell" data-row="5" data-col="2"></div><div class="cell" data-row="5" data-col="3"></div><div class="cell" data-row="5" data-col="4"></div><div class="cell" data-row="5" data-col="5"></div><div class="cell" data-row="5" data-col="6"></div><div class="cell" data-row="5" data-col="7"></div><div class="cell" data-row="5" data-col="8"></div><div class="cell" data-row="5" data-col="9"></div><div class="cell" data-row="5" data-col="10"></div><div class="cell" data-row="5" data-col="11"></div><div class="cell" data-row="5" data-col="12"></div><div class="cell" data-row="5" data-col="13"></div><div class="cell" data-row="5" data-col="14"></div><div class="cell" data-row="6" data-col="0"></div><div class="cell" data-row="6" data-col="1"></div><div class="cell" data-row="6" data-col="2"></div><div class="cell" data-row="6" data-col="3"></div><div class="cell" data-row="6" data-col="4"></div><div class="cell" data-row="6" data-col="5"></div><div class="cell" data-row="6" data-col="6"></div><div class="cell" data-row="6" data-col="7"></div><div class="cell" data-row="6" data-col="8"></div><div class="cell" data-row="6" data-col="9"></div><div class="cell" data-row="6" data-col="10"></div><div class="cell" data-row="6" data-col="11"></div><div class="cell" data-row="6" data-col="12"></div><div class="cell" data-row="6" data-col="13"></div><div class="cell" data-row="6" data-col="14"></div><div class="cell" data-row="7" data-col="0"></div><div class="cell" data-row="7" data-col="1"></div><div class="cell" data-row="7" data-col="2"></div><div class="cell" data-row="7" data-col="3"></div><div class="cell" data-row="7" data-col="4"></div><div class="cell" data-row="7" data-col="5"></div><div class="cell" data-row="7" data-col="6"></div><div class="cell" data-row="7" data-col="7"></div><div class="cell" data-row="7" data-col="8"></div><div class="cell" data-row="7" data-col="9"></div><div class="cell" data-row="7" data-col="10"></div><div class="cell" data-row="7" data-col="11"></div><div class="cell" data-row="7" data-col="12"></div><div class="cell" data-row="7" data-col="13"></div><div class="cell" data-row="7" data-col="14"></div><div class="cell" data-row="8" data-col="0"></div><div class="cell" data-row="8" data-col="1"></div><div class="cell" data-row="8" data-col="2"></div><div class="cell" data-row="8" data-col="3"></div><div class="cell" data-row="8" data-col="4"></div><div class="cell" data-row="8" data-col="5"></div><div class="cell" data-row="8" data-col="6"></div><div class="cell" data-row="8" data-col="7"></div><div class="cell" data-row="8" data-col="8"></div><div class="cell" data-row="8" data-col="9"></div><div class="cell" data-row="8" data-col="10"></div><div class="cell" data-row="8" data-col="11"></div><div class="cell" data-row="8" data-col="12"></div><div class="cell" data-row="8" data-col="13"></div><div class="cell" data-row="8" data-col="14"></div><div class="cell" data-row="9" data-col="0"></div><div class="cell" data-row="9" data-col="1"></div><div class="cell" data-row="9" data-col="2"></div><div class="cell" data-row="9" data-col="3"></div><div class="cell" data-row="9" data-col="4"></div><div class="cell" data-row="9" data-col="5"></div><div class="cell" data-row="9" data-col="6"></div><div class="cell" data-row="9" data-col="7"></div><div class="cell" data-row="9" data-col="8"></div><div class="cell" data-row="9" data-col="9"></div><div class="cell" data-row="9" data-col="10"></div><div class="cell" data-row="9" data-col="11"></div><div class="cell" data-row="9" data-col="12"></div><div class="cell" data-row="9" data-col="13"></div><div class="cell" data-row="9" data-col="14"></div><div class="cell" data-row="10" data-col="0"></div><div class="cell" data-row="10" data-col="1"></div><div class="cell" data-row="10" data-col="2"></div><div class="cell" data-row="10" data-col="3"></div><div class="cell" data-row="10" data-col="4"></div><div class="cell" data-row="10" data-col="5"></div><div class="cell" data-row="10" data-col="6"></div><div class="cell" data-row="10" data-col="7"></div><div class="cell" data-row="10" data-col="8"></div><div class="cell" data-row="10" data-col="9"></div><div class="cell" data-row="10" data-col="10"></div><div class="cell" data-row="10" data-col="11"></div><div class="cell" data-row="10" data-col="12"></div><div class="cell" data-row="10" data-col="13"></div><div class="cell" data-row="10" data-col="14"></div><div class="cell" data-row="11" data-col="0"></div><div class="cell" data-row="11" data-col="1"></div><div class="cell" data-row="11" data-col="2"></div><div class="cell" data-row="11" data-col="3"></div><div class="cell" data-row="11" data-col="4"></div><div class="cell" data-row="11" data-col="5"></div><div class="cell" data-row="11" data-col="6"></div><div class="cell" data-row="11" data-col="7"></div><div class="cell" data-row="11" data-col="8"></div><div class="cell" data-row="11" data-col="9"></div><div class="cell" data-row="11" data-col="10"></div><div class="cell" data-row="11" data-col="11"></div><div class="cell" data-row="11" data-col="12"></div><div class="cell" data-row="11" data-col="13"></div><div class="cell" data-row="11" data-col="14"></div><div class="cell" data-row="12" data-col="0"></div><div class="cell" data-row="12" data-col="1"></div><div class="cell" data-row="12" data-col="2"></div><div class="cell" data-row="12" data-col="3"></div><div class="cell" data-row="12" data-col="4"></div><div class="cell" data-row="12" data-col="5"></div><div class="cell" data-row="12" data-col="6"></div><div class="cell" data-row="12" data-col="7"></div><div class="cell" data-row="12" data-col="8"></div><div class="cell" data-row="12" data-col="9"></div><div class="cell" data-row="12" data-col="10"></div><div class="cell" data-row="12" data-col="11"></div><div class="cell" data-row="12" data-col="12"></div><div class="cell" data-row="12" data-col="13"></div><div class="cell" data-row="12" data-col="14"></div><div class="cell" data-row="13" data-col="0"></div><div class="cell" data-row="13" data-col="1"></div><div class="cell" data-row="13" data-col="2"></div><div class="cell" data-row="13" data-col="3"></div><div class="cell" data-row="13" data-col="4"></div><div class="cell" data-row="13" data-col="5"></div><div class="cell" data-row="13" data-col="6"></div><div class="cell" data-row="13" data-col="7"></div><div class="cell" data-row="13" data-col="8"></div><div class="cell" data-row="13" data-col="9"></div><div class="cell" data-row="13" data-col="10"></div><div class="cell" data-row="13" data-col="11"></div><div class="cell" data-row="13" data-col="12"></div><div class="cell" data-row="13" data-col="13"></div><div class="cell" data-row="13" data-col="14"></div><div class="cell" data-row="14" data-col="0"></div><div class="cell" data-row="14" data-col="1"></div><div class="cell" data-row="14" data-col="2"></div><div class="cell" data-row="14" data-col="3"></div><div class="cell" data-row="14" data-col="4"></div><div class="cell" data-row="14" data-col="5"></div><div class="cell" data-row="14" data-col="6"></div><div class="cell" data-row="14" data-col="7"></div><div class="cell" data-row="14" data-col="8"></div><div class="cell" data-row="14" data-col="9"></div><div class="cell" data-row="14" data-col="10"></div><div class="cell" data-row="14" data-col="11"></div><div class="cell" data-row="14" data-col="12"></div><div class="cell" data-row="14" data-col="13"></div><div class="cell" data-row="14" data-col="14"></div></div>
+        <div class="controls">
+            <button id="restart">重新开始</button>
+            <button id="undo">悔棋</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const boardSize = 15;
+            const board = document.getElementById('board');
+            const statusDisplay = document.getElementById('status');
+            const restartButton = document.getElementById('restart');
+            const undoButton = document.getElementById('undo');
+            
+            let gameState = Array(boardSize).fill().map(() => Array(boardSize).fill(null));
+            let currentPlayer = 'black';
+            let gameHistory = [];
+            let gameOver = false;
+            
+            // 初始化棋盘
+            function initializeBoard() {
+                board.innerHTML = '';
+                
+                // 创建网格线
+                for (let i = 0; i < boardSize; i++) {
+                    const horizontalLine = document.createElement('div');
+                    horizontalLine.className = 'grid-line horizontal';
+                    horizontalLine.style.top = `${i * 40 + 20}px`;
+                    board.appendChild(horizontalLine);
+                    
+                    const verticalLine = document.createElement('div');
+                    verticalLine.className = 'grid-line vertical';
+                    verticalLine.style.left = `${i * 40 + 20}px`;
+                    board.appendChild(verticalLine);
+                }
+                
+                // 创建星位点
+                const starPoints = [
+                    [3, 3], [3, 11], [7, 7], [11, 3], [11, 11]
+                ];
+                
+                starPoints.forEach(([x, y]) => {
+                    const starPoint = document.createElement('div');
+                    starPoint.className = 'star-point';
+                    starPoint.style.left = `${x * 40 + 20}px`;
+                    starPoint.style.top = `${y * 40 + 20}px`;
+                    board.appendChild(starPoint);
+                });
+                
+                // 创建棋盘格子
+                for (let row = 0; row < boardSize; row++) {
+                    for (let col = 0; col < boardSize; col++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.dataset.row = row;
+                        cell.dataset.col = col;
+                        cell.addEventListener('click', () => handleCellClick(row, col));
+                        board.appendChild(cell);
+                    }
+                }
+            }
+            
+            // 处理点击事件
+            function handleCellClick(row, col) {
+                if (gameOver || gameState[row][col] !== null) return;
+                
+                // 保存当前状态到历史记录
+                gameHistory.push({
+                    state: JSON.parse(JSON.stringify(gameState)),
+                    player: currentPlayer
+                });
+                
+                // 更新游戏状态
+                gameState[row][col] = currentPlayer;
+                renderMove(row, col, currentPlayer);
+                
+                // 检查胜利条件
+                if (checkWin(row, col)) {
+                    statusDisplay.textContent = `${currentPlayer === 'black' ? '黑方' : '白方'}获胜！`;
+                    gameOver = true;
+                    return;
+                }
+                
+                // 切换玩家
+                currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
+                statusDisplay.textContent = `${currentPlayer === 'black' ? '黑方' : '白方'}回合`;
+            }
+            
+            // 渲染棋子
+            function renderMove(row, col, player) {
+                const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+                const stone = document.createElement('div');
+                stone.className = `stone ${player}`;
+                cell.appendChild(stone);
+            }
+            
+            // 检查胜利条件
+            function checkWin(row, col) {
+                const directions = [
+                    [0, 1],   // 水平
+                    [1, 0],     // 垂直
+                    [1, 1],     // 对角线
+                    [1, -1]     // 反对角线
+                ];
+                
+                for (const [dx, dy] of directions) {
+                    let count = 1;
+                    
+                    // 正向检查
+                    for (let i = 1; i <= 4; i++) {
+                        const newRow = row + i * dx;
+                        const newCol = col + i * dy;
+                        
+                        if (
+                            newRow < 0 || newRow >= boardSize ||
+                            newCol < 0 || newCol >= boardSize ||
+                            gameState[newRow][newCol] !== currentPlayer
+                        ) {
+                            break;
+                        }
+                        count++;
+                    }
+                    
+                    // 反向检查
+                    for (let i = 1; i <= 4; i++) {
+                        const newRow = row - i * dx;
+                        const newCol = col - i * dy;
+                        
+                        if (
+                            newRow < 0 || newRow >= boardSize ||
+                            newCol < 0 || newCol >= boardSize ||
+                            gameState[newRow][newCol] !== currentPlayer
+                        ) {
+                            break;
+                        }
+                        count++;
+                    }
+                    
+                    if (count >= 5) return true;
+                }
+                
+                return false;
+            }
+            
+            // 重新开始游戏
+            function restartGame() {
+                gameState = Array(boardSize).fill().map(() => Array(boardSize).fill(null));
+                currentPlayer = 'black';
+                gameHistory = [];
+                gameOver = false;
+                statusDisplay.textContent = '黑方回合';
+                initializeBoard();
+            }
+            
+            // 悔棋
+            function undoMove() {
+                if (gameHistory.length === 0 || gameOver) return;
+                
+                const lastMove = gameHistory.pop();
+                gameState = lastMove.state;
+                currentPlayer = lastMove.player;
+                gameOver = false;
+                statusDisplay.textContent = `${currentPlayer === 'black' ? '黑方' : '白方'}回合`;
+                
+                // 重新渲染整个棋盘
+                const cells = document.querySelectorAll('.cell');
+                cells.forEach(cell => {
+                    cell.innerHTML = '';
+                });
+                
+                for (let row = 0; row < boardSize; row++) {
+                    for (let col = 0; col < boardSize; col++) {
+                        if (gameState[row][col] !== null) {
+                            renderMove(row, col, gameState[row][col]);
+                        }
+                    }
+                }
+            }
+            
+            // 事件监听
+            restartButton.addEventListener('click', restartGame);
+            undoButton.addEventListener('click', undoMove);
+            
+            // 初始化游戏
+            initializeBoard();
+        });
+    </script>
+
+
+```
+
+## 游戏功能说明
+
+1. **基本规则**：
+   - 15×15 标准五子棋棋盘
+   - 黑方先行，轮流落子
+   - 先形成五子连线的一方获胜
+
+2. **界面特点**：
+   - 木质风格的棋盘设计
+   - 清晰的星位标记
+   - 棋子有立体感（使用渐变和阴影）
+
+3. **功能按钮**：
+   - 重新开始：重置游戏
+   - 悔棋：撤销上一步操作
+
+4. **游戏状态显示**：
+   - 显示当前回合玩家
+   - 游戏结束时显示获胜方
+
+## 使用方法
+
+1. 将上述代码复制到一个文本编辑器中
+2. 保存为 `.html` 文件（例如 `gomoku.html`）
+3. 用浏览器打开该文件即可开始游戏
+
+您可以根据需要调整样式或添加更多功能，如计时器、AI对手等。<div id="chrome_websiteIP" class="chrome_websiteIP_right">127.0.0.1</div></body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
